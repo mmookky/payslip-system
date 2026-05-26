@@ -1,0 +1,10 @@
+cat > .gitignore << 'EOF'
+.env
+--pycache--/
+*.pyc
+node_module/
+.nuxt/
+.output/
+*.log
+.DS_Store
+EOF
