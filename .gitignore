@@ -1,10 +1,12 @@
-cat > .gitignore << 'EOF'
 .env
---pycache--/
+__pycache__/
 *.pyc
-node_module/
+node_modules/
 .nuxt/
 .output/
 *.log
 .DS_Store
-EOF
+frontend/.env
+frontend/.nuxt/
+frontend/.output/
+frontend/node_modules/

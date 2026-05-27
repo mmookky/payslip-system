@@ -7,7 +7,8 @@ import models
 import schemas
 import openpyxl
 from io import BytesIO
-from datetime import date
+from datetime import datetime
+from dateutil import parser as date_parser
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -18,7 +19,7 @@ COLUMN_MAP = {
     "แผนก / Department":               "department",
     "ตำแหน่ง / Position":              "position",
     "วันเริ่มทำงาน / Start Working":   "start_date",
-    #
+    # รายรับ
     "เงินเดือน / Salary":              "base_salary",
     "Paid Salary":                      "paid_salary",
     "Allowance":                        "allowance",
@@ -37,6 +38,37 @@ COLUMN_MAP = {
     "ประกันสังคมสะสม ประจำปี 2568":   "ytd_sso",
     "Total TAX":                        "ytd_tax",
 }
+
+
+def parse_number(val):
+    """แปลงค่าตัวเลขจาก Excel ให้ถูกต้อง"""
+    if val is None or val == "":
+        return None
+    if isinstance(val, float) and val == int(val):
+        return int(val)
+    return val
+
+
+def parse_date(val):
+    """แปลง date format ต่างๆ จาก Excel"""
+    if not val:
+        return None
+    try:
+        if isinstance(val, datetime):
+            return val.date()
+        return date_parser.parse(str(val)).date()
+    except Exception:
+        return None
+
+
+def parse_national_id(val):
+    """แปลง national_id ให้เป็น string 13 หลัก ไม่มี .0"""
+    if not val:
+        return None
+    try:
+        return str(int(float(str(val)))).strip()
+    except Exception:
+        return str(val).strip()
 
 
 @router.post("/login")
@@ -113,11 +145,11 @@ def upload_payslip(
             val = row[idx] if idx is not None else None
             if val == "" or val is None:
                 return None
-            return val
+            return parse_number(val)
 
-        national_id = str(get("national_id") or "").strip()
+        national_id = parse_national_id(get("national_id"))
         if not national_id or national_id == "None":
-            errors.append(f"แถว {total+1}: ไม่มีเลขบัตรประชาชน")
+            errors.append(f"แถว {total + 1}: ไม่มีเลขบัตรประชาชน")
             failed += 1
             continue
 
@@ -131,12 +163,12 @@ def upload_payslip(
             from auth import hash_password
             employee = models.Employee(
                 national_id=national_id,
-                employee_code=str(get("employee_code") or national_id),
+                employee_code=str(parse_national_id(get("employee_code")) or national_id),
                 first_name=first_name,
                 last_name=last_name,
                 department=get("department"),
                 position=get("position"),
-                start_date=get("start_date"),
+                start_date=parse_date(row[col_index["start_date"]] if "start_date" in col_index else None),
                 password_hash=hash_password(national_id)
             )
             db.add(employee)
@@ -147,7 +179,7 @@ def upload_payslip(
             employee_id=employee.id, month=month, year=year
         ).first()
         if existing_slip:
-            errors.append(f"แถว {total+1}: พนักงาน {national_id} มีข้อมูลเดือนนี้แล้ว")
+            errors.append(f"แถว {total + 1}: พนักงาน {national_id} มีข้อมูลเดือนนี้แล้ว")
             failed += 1
             continue
 
@@ -179,7 +211,7 @@ def upload_payslip(
             db.flush()
             success += 1
         except Exception as e:
-            errors.append(f"แถว {total+1}: {str(e)}")
+            errors.append(f"แถว {total + 1}: {str(e)}")
             failed += 1
 
     upload.total_records = total
