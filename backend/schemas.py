@@ -65,6 +65,8 @@ class PayslipDetail(BaseModel):
     social_security: Decimal
     tax: Decimal
     provident_fund: Decimal
+    tax_allowance: Decimal
+    welfare_fund: Decimal
     total_deductions: Decimal
 
     net_pay: Decimal
@@ -79,15 +81,35 @@ class PayslipDetail(BaseModel):
         from_attributes = True
 
 
+# ---- Admin result ----
+
+class AdminPayslipOut(BaseModel):
+    id: int
+    month: int
+    year: int
+    employee: EmployeeOut
+    base_salary: Decimal
+    paid_salary: Decimal
+    total_income: Decimal
+    total_deductions: Decimal
+    net_pay: Decimal
+
+    class Config:
+        from_attributes = True
+
+
 # ---- Upload ----
 
 class UploadResult(BaseModel):
+    id: int
     filename: str
     month: int
     year: int
     total_records: int
     success_records: int
     failed_records: int
+    status: str
+    has_error_file: bool
     errors: list[str]
 
 class UploadHistoryOut(BaseModel):

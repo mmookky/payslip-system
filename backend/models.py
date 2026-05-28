@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Date, DECIMAL, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, Date, DECIMAL, ForeignKey, UniqueConstraint, LargeBinary
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -38,6 +38,8 @@ class UploadHistory(Base):
     id              = Column(Integer, primary_key=True, index=True)
     admin_id        = Column(Integer, ForeignKey("admins.id"), nullable=False)
     filename        = Column(String(255), nullable=False)
+    original_file   = Column(LargeBinary(length=2**24), nullable=True)
+    error_file      = Column(LargeBinary(length=2**24), nullable=True)
     month           = Column(Integer, nullable=False)
     year            = Column(Integer, nullable=False)
     total_records   = Column(Integer, default=0)
@@ -50,7 +52,7 @@ class UploadHistory(Base):
     payslips = relationship("Payslip", back_populates="upload")
 
     __table_args__ = (
-        UniqueConstraint("month", "year", name="unique_upload"),
+        UniqueConstraint("month", "year", "status", name="unique_upload_success"),
     )
 
 
@@ -76,6 +78,8 @@ class Payslip(Base):
     social_security  = Column(DECIMAL(12,2), default=0)
     tax              = Column(DECIMAL(12,2), default=0)
     provident_fund   = Column(DECIMAL(12,2), default=0)
+    tax_allowance    = Column(DECIMAL(12,2), default=0)
+    welfare_fund     = Column(DECIMAL(12,2), default=0)
     total_deductions = Column(DECIMAL(12,2), default=0)
 
     net_pay          = Column(DECIMAL(12,2), default=0)
