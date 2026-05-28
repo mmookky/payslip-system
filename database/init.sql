@@ -23,6 +23,8 @@ CREATE TABLE IF NOT EXISTS upload_history (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     admin_id        INT          NOT NULL,
     filename        VARCHAR(255) NOT NULL,
+    original_file   LONGBLOB     NULL,
+    error_file      LONGBLOB     NULL,
     month           INT          NOT NULL,
     year            INT          NOT NULL,
     total_records   INT  DEFAULT 0,
@@ -55,6 +57,8 @@ CREATE TABLE IF NOT EXISTS payslips (
     tax              DECIMAL(12,2)  DEFAULT 0,
     provident_fund   DECIMAL(12,2)  DEFAULT 0,
     total_deductions DECIMAL(12,2)  DEFAULT 0,
+    tax_allowance    DECIMAL(12,2)  DEFAULT 0,
+    welfare_fund     DECIMAL(12,2)  DEFAULT 0,
 
     net_pay          DECIMAL(12,2)  DEFAULT 0,
 
