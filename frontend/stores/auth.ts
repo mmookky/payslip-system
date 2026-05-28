@@ -1,34 +1,43 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
-    token: process.client ? localStorage.getItem('token') : null,
-    role: process.client ? localStorage.getItem('role') : null,
+    token: null,
+    role: null,
   }),
 
   getters: {
     isLoggedIn: (state) => !!state.token,
-    isAdmin: (state) => state.role === 'admin',
-    isEmployee: (state) => state.role === 'employee',
+    isAdmin: (state) => state.role === "admin",
+    isEmployee: (state) => state.role === "employee",
   },
 
   actions: {
-    setAuth(token: string, role: string) {
-      this.token = token
-      this.role = role
+    initAuth() {
       if (process.client) {
-        localStorage.setItem('token', token)
-        localStorage.setItem('role', role)
+        const token = useCookie("token");
+        const role = useCookie("role");
+        this.token = token.value;
+        this.role = role.value;
       }
     },
 
+    setAuth(token, role) {
+      this.token = token;
+      this.role = role;
+      const tokenCookie = useCookie("token", { maxAge: 60 * 60 * 8 });
+      const roleCookie = useCookie("role", { maxAge: 60 * 60 * 8 });
+      tokenCookie.value = token;
+      roleCookie.value = role;
+    },
+
     logout() {
-      this.token = null
-      this.role = null
-      if (process.client) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('role')
-      }
-    }
-  }
-})
+      this.token = null;
+      this.role = null;
+      const tokenCookie = useCookie("token");
+      const roleCookie = useCookie("role");
+      tokenCookie.value = null;
+      roleCookie.value = null;
+    },
+  },
+});

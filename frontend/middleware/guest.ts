@@ -1,8 +1,9 @@
 export default defineNuxtRouteMiddleware(() => {
-  const auth = useAuthStore()
+  const token = useCookie('token')
+  const role = useCookie('role')
 
-  if (auth.isLoggedIn) {
-    if (auth.isAdmin) {
+  if (token.value) {
+    if (role.value === 'admin') {
       return navigateTo('/admin/upload')
     }
     return navigateTo('/employee/payslip')

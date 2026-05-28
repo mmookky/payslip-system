@@ -1,15 +1,16 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const auth = useAuthStore()
+  const token = useCookie('token')
+  const role = useCookie('role')
 
-  if (!auth.isLoggedIn) {
+  if (!token.value) {
     return navigateTo('/')
   }
 
-  if (to.path.startsWith('/employee') && !auth.isEmployee) {
+  if (to.path.startsWith('/employee') && role.value !== 'employee') {
     return navigateTo('/admin/upload')
   }
 
-  if (to.path.startsWith('/admin') && !auth.isAdmin) {
+  if (to.path.startsWith('/admin') && role.value !== 'admin') {
     return navigateTo('/employee/payslip')
   }
 })
