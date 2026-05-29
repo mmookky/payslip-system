@@ -13,6 +13,31 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  seed:
+    image: python:3.11-slim
+    container_name: payslip_seed
+    restart: "no"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./database:/app
+    working_dir: /app
+    command: >
+      sh -c "pip install bcrypt==4.0.1 aiomysql python-dotenv -q &&
+             python seed.py"
+    depends_on:
+      db:
+        condition: service_healthy
 
   backend:
     build: ./backend
@@ -30,7 +55,10 @@ services:
     volumes:
       - ./backend:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
 
   frontend:
     build: ./frontend

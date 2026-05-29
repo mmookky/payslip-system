@@ -73,11 +73,3 @@ CREATE TABLE IF NOT EXISTS payslips (
     UNIQUE KEY unique_payslip (employee_id, month, year)
 );
 
--- Admin ex (password: admin1234)
-INSERT INTO admins (username, password_hash, email) VALUES
-('admin', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/HS.iK9i', 'admin@company.com');
-
--- Employee ex (password: emp1234)
-INSERT INTO employees (national_id, employee_code, first_name, last_name, department, position, start_date, password_hash) VALUES
-('1101200132001', 'EMP001', 'AKT', 'Thailand', 'IT', 'Manager', '2025-01-01',
-'$2b$12$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
