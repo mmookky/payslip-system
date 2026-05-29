@@ -33,7 +33,7 @@ cd payslip-system
 ### 2. Setup Environment Variables
 
 ```bash
-cp .env.txt .env
+cp .env.example .env
 ```
 
 แก้ไขค่าใน `.env` ตามต้องการ:
@@ -49,7 +49,7 @@ SECRET_KEY=your-super-secret-jwt-key-change-this-in-production
 ### 3. Setup Frontend Environment
 
 ```bash
-cp frontend/.env.txt frontend/.env
+cp frontend/.env.example frontend/.env
 ```
 
 ค่าใน `frontend/.env`:
