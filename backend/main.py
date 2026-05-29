@@ -7,7 +7,7 @@ load_dotenv()
 
 app = FastAPI(
     title="Self-Service Payslip API",
-    description="API สำหรับระบบสลิปเงินเดือน",
+    description="API for Payroll system",
     version="1.0.0"
 )
 

@@ -1,47 +1,9 @@
 <template>
-  <v-app>
-    <v-navigation-drawer permanent>
-      <v-list-item
-        prepend-icon="mdi-shield-account"
-        title="Admin / HR"
-        subtitle="Payslip System"
-        class="py-4"
-      />
-      <v-divider />
-      <v-list nav>
-        <v-list-item
-          prepend-icon="mdi-upload"
-          title="Upload Payslip"
-          to="/admin/upload"
-          rounded="lg"
-        />
-        <v-list-item
-          prepend-icon="mdi-table"
-          title="Payslip Result"
-          to="/admin/result"
-          rounded="lg"
-        />
-        <v-list-item
-          prepend-icon="mdi-history"
-          title="Upload History"
-          to="/admin/history"
-          rounded="lg"
-        />
-      </v-list>
-      <template #append>
-        <div class="pa-3">
-          <v-btn block variant="tonal" color="error" @click="logout">
-            <v-icon start>mdi-logout</v-icon>
-            Logout
-          </v-btn>
-        </div>
-      </template>
-    </v-navigation-drawer>
-
+  <v-app class="bg-honey">
+    <DrawerAdmin/>
     <v-main>
       <v-container class="pa-6">
         <h1 class="text-h5 font-weight-bold mb-6">Payslip Result</h1>
-
         <!-- Filter -->
         <v-card rounded="lg" elevation="2" class="pa-4 mb-4">
           <v-row align="center">
@@ -143,8 +105,7 @@
 definePageMeta({ middleware: 'auth' })
 
 const { api } = useApi()
-const auth = useAuthStore()
-const router = useRouter()
+const router = useRouter();
 
 const loading = ref(false)
 const payslips = ref([])
@@ -209,8 +170,6 @@ const fetchPayslips = async () => {
     loading.value = false
   }
 }
-
-const logout = () => { auth.logout(); router.push('/') }
 
 onMounted(() => { fetchPayslips() })
 </script>

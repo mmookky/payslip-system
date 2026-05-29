@@ -5,18 +5,13 @@
         <v-row justify="center" align="center">
           <v-col cols="12" sm="6" md="4">
             <v-card rounded="lg" elevation="3" class="pa-6">
-              <!-- Header -->
               <div class="text-center mb-6">
-                <v-avatar color="secondary" size="56" class="mb-3">
-                  <v-icon size="28" color="white">mdi-account</v-icon>
+                <v-avatar color="primary" size="56" class="mb-3">
+                  <v-icon size="28" color="white">mdi-shield-account</v-icon>
                 </v-avatar>
-                <h1 class="text-h6 font-weight-bold">Employee login</h1>
-                <p class="text-body-2 text-medium-emphasis mt-1">
-                  Enter your national ID number and password.
-                </p>
+                <h1 class="text-h6 font-weight-bold">Admin / HR Login</h1>
               </div>
 
-              <!-- Alert Error -->
               <v-alert
                 v-if="errorMsg"
                 type="error"
@@ -31,13 +26,12 @@
 
               <!-- Form -->
               <v-text-field
-                v-model="form.national_id"
-                label="national ID"
-                prepend-inner-icon="mdi-card-account-details"
+                v-model="form.username"
+                label="username"
+                prepend-inner-icon="mdi-account"
                 variant="outlined"
                 rounded="lg"
                 class="mb-3"
-                maxlength="13"
                 :disabled="loading"
               />
 
@@ -56,13 +50,13 @@
               />
 
               <v-btn
-                class="text-none"
                 block
-                color="secondary"
+                color="primary"
                 size="large"
                 rounded="lg"
                 :loading="loading"
                 @click="login"
+                class="text-none"
               >
                 Login
               </v-btn>
@@ -88,8 +82,8 @@ const auth = useAuthStore();
 const router = useRouter();
 
 const form = reactive({
-  national_id: "1101200132001",
-  password: "1101200132001",
+  username: "admin",
+  password: "admin1234",
 });
 
 const loading = ref(false);
@@ -97,13 +91,8 @@ const errorMsg = ref("");
 const showPassword = ref(false);
 
 const login = async () => {
-  if (!form.national_id || !form.password) {
-    errorMsg.value = "Please enter your national ID number and password.";
-    return;
-  }
-
-  if (form.national_id.length !== 13) {
-    errorMsg.value = "The national identification number must have 13 digits.";
+  if (!form.username || !form.password) {
+    errorMsg.value = "Please enter your username and password.";
     return;
   }
 
@@ -111,12 +100,12 @@ const login = async () => {
   errorMsg.value = "";
 
   try {
-    const { data } = await api.post("/employee/login", {
-      national_id: form.national_id,
+    const { data } = await api.post("/admin/login", {
+      username: form.username,
       password: form.password,
     });
     auth.setAuth(data.access_token, data.role);
-    router.push("/employee/payslip");
+    router.push("/admin/upload");
   } catch (err) {
     errorMsg.value =
       err.response?.data?.detail || "An error occurred. Please try again.";

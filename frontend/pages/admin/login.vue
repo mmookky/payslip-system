@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="bg-grey-lighten-3">
+    <v-main class="bg-deep_blue">
       <v-container class="fill-height" fluid>
         <v-row justify="center" align="center">
           <v-col cols="12" sm="6" md="4">

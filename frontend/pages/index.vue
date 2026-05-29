@@ -1,17 +1,16 @@
 <template>
   <v-app>
-    <v-main class="bg-grey-lighten-3">
+    <v-main class="bg-deep_blue">
       <v-container class="fill-height" fluid>
         <v-row justify="center" align="center">
           <v-col cols="12" sm="6" md="4">
             <v-card rounded="lg" elevation="3" class="pa-6">
-
               <!-- Header -->
               <div class="text-center mb-8">
                 <v-avatar color="primary" size="64" class="mb-4">
                   <span class="text-h5 font-weight-bold text-white">A</span>
                 </v-avatar>
-                <h1 class="text-h5 font-weight-bold">ระบบสลิปเงินเดือน</h1>
+                <h1 class="text-h5 font-weight-bold">Payroll system</h1>
                 <p class="text-body-2 text-medium-emphasis mt-1">
                   Self-Service Payslip System
                 </p>
@@ -23,11 +22,11 @@
                 color="primary"
                 size="large"
                 rounded="lg"
-                class="mb-3"
+                class="mb-3 text-none"
                 to="/admin/login"
               >
                 <v-icon start>mdi-shield-account</v-icon>
-                เข้าสู่ระบบ Admin / HR
+                Log-in Admin / HR
               </v-btn>
 
               <v-btn
@@ -37,11 +36,11 @@
                 rounded="lg"
                 variant="outlined"
                 to="/employee/login"
+                class="text-none"
               >
                 <v-icon start>mdi-account</v-icon>
-                เข้าสู่ระบบพนักงาน
+                Log-in Employee
               </v-btn>
-
             </v-card>
           </v-col>
         </v-row>
@@ -52,6 +51,6 @@
 
 <script setup>
 definePageMeta({
-  middleware: 'guest'
-})
+  middleware: "guest",
+});
 </script>

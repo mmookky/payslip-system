@@ -1,47 +1,9 @@
 <template>
-  <v-app>
-    <v-navigation-drawer permanent>
-      <v-list-item
-        prepend-icon="mdi-shield-account"
-        title="Admin / HR"
-        subtitle="Payslip System"
-        class="py-4"
-      />
-      <v-divider />
-      <v-list nav>
-        <v-list-item
-          prepend-icon="mdi-upload"
-          title="Upload Payslip"
-          to="/admin/upload"
-          rounded="lg"
-        />
-        <v-list-item
-          prepend-icon="mdi-table"
-          title="Payslip Result"
-          to="/admin/result"
-          rounded="lg"
-        />
-        <v-list-item
-          prepend-icon="mdi-history"
-          title="Upload History"
-          to="/admin/history"
-          rounded="lg"
-        />
-      </v-list>
-      <template #append>
-        <div class="pa-3">
-          <v-btn block variant="tonal" color="error" @click="logout">
-            <v-icon start>mdi-logout</v-icon>
-            Logout
-          </v-btn>
-        </div>
-      </template>
-    </v-navigation-drawer>
-
+  <v-app class="bg-honey">
+    <DrawerAdmin />
     <v-main>
       <v-container class="pa-6">
         <h1 class="text-h5 font-weight-bold mb-6">Upload History</h1>
-
         <v-card rounded="lg" elevation="2">
           <v-data-table
             :headers="headers"
@@ -59,7 +21,7 @@
                 variant="tonal"
                 size="small"
               >
-                {{ item.status === 'completed' ? 'Success' : 'Failed' }}
+                {{ item.status === "completed" ? "Success" : "Failed" }}
               </v-chip>
             </template>
 
@@ -96,80 +58,72 @@
                 <v-tooltip activator="parent">Download Error File</v-tooltip>
               </v-btn>
             </template>
-
           </v-data-table>
         </v-card>
-
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: "auth" });
 
-const { api } = useApi()
-const auth = useAuthStore()
-const router = useRouter()
-
-const loading = ref(false)
-const uploads = ref([])
+const { api } = useApi();
+const loading = ref(false);
+const uploads = ref([]);
 
 const headers = [
-  { title: 'Filename', key: 'filename' },
-  { title: 'Period', key: 'period' },
-  { title: 'Success / Total', key: 'records' },
-  { title: 'Status', key: 'status' },
-  { title: 'Uploaded At', key: 'uploaded_at' },
-  { title: 'Actions', key: 'actions', sortable: false },
-]
-
-const monthNames = [
-  'January', 'February', 'March', 'April',
-  'May', 'June', 'July', 'August',
-  'September', 'October', 'November', 'December'
-]
-
-const monthName = (m) => monthNames[m - 1]
+  { title: "Filename", key: "filename" },
+  { title: "Period", key: "period" },
+  { title: "Success / Total", key: "records" },
+  { title: "Status", key: "status" },
+  { title: "Uploaded At", key: "uploaded_at" },
+  { title: "Actions", key: "actions", sortable: false },
+];
 
 const formatDate = (dateStr) => {
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('en-GB', {
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  })
-}
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
 
 const downloadFile = async (url, filename) => {
   try {
-    const response = await api.get(url, { responseType: 'blob' })
-    const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(new Blob([response.data]))
-    link.setAttribute('download', filename)
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
+    const response = await api.get(url, { responseType: "blob" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(new Blob([response.data]));
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   } catch (err) {
-    console.error('Download failed:', err)
+    console.error("Download failed:", err);
   }
-}
+};
 
-const downloadOriginal = (id, filename) => downloadFile(`/admin/uploads/${id}/download-original`, filename)
-const downloadError = (id) => downloadFile(`/admin/uploads/${id}/download-error`, `error_${id}.xlsx`)
+const downloadOriginal = (id, filename) =>
+  downloadFile(`/admin/uploads/${id}/download-original`, filename);
+const downloadError = (id) =>
+  downloadFile(`/admin/uploads/${id}/download-error`, `error_${id}.xlsx`);
 
 const fetchUploads = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const { data } = await api.get('/admin/uploads')
-    uploads.value = data
+    const { data } = await api.get("/admin/uploads");
+    uploads.value = data;
   } catch (err) {
-    console.error(err)
+    console.error(err);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
-const logout = () => { auth.logout(); router.push('/') }
-
-onMounted(() => { fetchUploads() })
+onMounted(() => {
+  fetchUploads();
+});
 </script>
